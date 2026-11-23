@@ -30,39 +30,43 @@
         <button type="submit">Submit</button>
     </form>
 
-    <script>
-        const form = document.getElementById('userForm');
-        const errorBox = document.getElementById('error-box');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorBox.style.display = 'none';
+<script>
+    const form = document.getElementById('userForm');
+    const errorBox = document.getElementById('error-box');
 
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorBox.style.display = 'none';
 
-            try {
-                const response = await fetch('http://127.0.0.1:5000/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email })
-                });
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
 
-                const result = await response.json();
+        try {
+            const response = await fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email })
+            });
 
-                if (response.ok) {
-                    // Redirect to Express success page
-                    window.location.href = '/success';
-                } else {
-                    // Display Flask validation/database error on the same page
-                    errorBox.textContent = result.error || 'Submission failed.';
-                    errorBox.style.display = 'block';
-                }
-            } catch (err) {
-                errorBox.textContent = 'Could not connect to the Flask backend.';
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = '/success';
+            } else {
+                errorBox.textContent = result.error || 'Submission failed.';
                 errorBox.style.display = 'block';
             }
-        });
-    </script>
+
+        } catch (err) {
+            console.error(err);
+            errorBox.textContent = 'Could not connect to the server.';
+            errorBox.style.display = 'block';
+        }
+    });
+</script>
+
 </body>
 </html>
